@@ -36,13 +36,12 @@ def getBorderContour(contours, index): #get border of contour from index
     print("Bottom right:", index, ":", bottom_right) 
         
     return top_left, top_right, bottom_left, bottom_right, x, y, w, h 
-def control(image):
-    cv2.imshow("Contour Image", image)
-    
-    k = cv2.waitKey(0)
-    if k%256 == 27:
-        print("Close")
-        cv2.destroyAllWindows()        
+def save(img):
+    img_counter = 1
+    imgName = "img_{}.png".format(img_counter)
+    output_path = f"{'findContours/img'}/{imgName}" # lưu ảnh vào đường link img với imgName là tên
+    cv2.imwrite(output_path, img)
+    print("{}writen!".format(imgName))           
 def drawAnythings(image, top_left, top_right, bottom_left, bottom_right, x, y, w, h):
     cv2.rectangle(image, (x, y), (x+w,y+h), (255,0,255), 2) #ve hinh chu nhat quanh contours
     cv2.line(image, top_left, bottom_right, (255,0,255), 2) #ve duong cheo
@@ -55,21 +54,23 @@ def drawAnythings(image, top_left, top_right, bottom_left, bottom_right, x, y, w
     cv2.line(image, dau,cuoi, (0, 0, 255), 1) # ve duong thang chinh giua khung contours
     cv2.line(image, (0,y), (x,y),(255,0,0),1) # ve duong thang tu vien toi khung
     cv2.putText(image, f"S: {int((h/2) * (h/2) * 3.14)}" , (0,80 ), cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0), 2, cv2.LINE_AA)
-
-
-   
-def main():
+def control(image):
+    save(image)
+    # cv2.imshow("Contour Image", image)
+    # k = cv2.waitKey(0)
+    # if k%256 == 27:
+    #    print("Close")
+    #    cv2.destroyAllWindows()      
+def main(vt):
     image = cv2.imread('findContours/img/img1.png', cv2.IMREAD_GRAYSCALE)  # Load image
     _, thresholded = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY) # chuyen anh sang B
     contours, _ = cv2.findContours(thresholded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # Find contours
     cv2.drawContours(image, contours, -1, (0, 0, 255),2) #ve Contours
     cv2.putText(image, f"Total: {len(contours)}" , (0,50), cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0), 2, cv2.LINE_AA)
     #===================================
-    top_left, top_right, bottom_left, bottom_right, x, y, w, h = getBorderContour(contours, 1)
-    
+    top_left, top_right, bottom_left, bottom_right, x, y, w, h = getBorderContour(contours, vt)
     drawAnythings(image, top_left, top_right, bottom_left, bottom_right, x, y, w, h)
     #===================================
-    control(image)
-    
+    control(image)   
 if __name__ == "__main__":
-    main()
+    main(0)
